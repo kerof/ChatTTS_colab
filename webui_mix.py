@@ -12,7 +12,7 @@ from tqdm import tqdm
 import random
 import gradio as gr
 import json
-from utils import batch_split, normalize_zh
+from utils import batch_split, normalize_zh, detect_language, normalize_en
 from tts_model import load_chat_tts_model, clear_cuda_cache, generate_audio_for_seed
 from config import DEFAULT_BATCH_SIZE, DEFAULT_SPEED, DEFAULT_TEMPERATURE, DEFAULT_TOP_K, DEFAULT_TOP_P, DEFAULT_ORAL, \
     DEFAULT_LAUGH, DEFAULT_BK, DEFAULT_SEG_LENGTH
@@ -135,7 +135,7 @@ def generate_seeds(num_seeds, texts, tq):
     seeds = []
     sample_rate = 24000
     # 按行分割文本 并正则化数字和标点字符
-    texts = [normalize_zh(_) for _ in texts.split('\n') if _.strip()]
+    texts = [normalize_zh(_) if detect_language(_) == 'zh' else normalize_en(_) for _ in texts.split('\n') if _.strip()]
     print(texts)
     if not tq:
         tq = tqdm
